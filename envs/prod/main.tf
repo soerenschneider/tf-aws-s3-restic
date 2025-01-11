@@ -1,6 +1,6 @@
 locals {
   env                          = basename(abspath(path.module))
-  password_store_paths_default = ["env/${local.env}/restic/%s"]
+  password_store_paths_default = ["soeren.cloud/env/${local.env}/restic/%s/aws-credentials"]
 }
 
 module "s3_bucket" {
