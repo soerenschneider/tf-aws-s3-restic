@@ -1,0 +1,9 @@
+/.idea
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+envs/*/tmp
+
+/output/
+**/variables-secrets.yaml
+*.iml
