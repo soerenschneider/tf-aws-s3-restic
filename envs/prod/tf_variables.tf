@@ -6,6 +6,11 @@ variable "repos" {
   type = list(object({
     name                 = string,
     password_store_paths = optional(list(string))
+    additional_buckets   = optional(list(object({
+      bucket_name = string,
+      readonly = optional(bool, true),
+      paths = optional(list(string))
+    })))
   }))
 }
 

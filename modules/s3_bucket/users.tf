@@ -16,27 +16,43 @@ resource "aws_iam_user_policy" "bucket_access" {
   name     = "s3_backup_repo_${var.bucket_name}"
   user     = aws_iam_user.user[each.key].name
 
-  policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Action": [
-        "s3:ListBucket",
-        "s3:GetBucketLocation"],
-      "Resource": ["arn:aws:s3:::${var.bucket_name}"]
-    },
-    {
-      "Effect": "Allow",
-      "Action": [
-        "s3:PutObject",
-        "s3:GetObject",
-        "s3:DeleteObject"
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = flatten([
+      [
+        {
+          Effect   = "Allow",
+          Action   = ["s3:ListBucket", "s3:GetBucketLocation"],
+          Resource = "arn:aws:s3:::${var.bucket_name}"
+        },
+        {
+          Effect   = "Allow",
+          Action   = ["s3:PutObject", "s3:GetObject", "s3:DeleteObject"],
+          Resource = "arn:aws:s3:::${var.bucket_name}/${each.key}/*"
+        }
       ],
-      "Resource": "arn:aws:s3:::${var.bucket_name}/${each.key}/*"
-    }
-  ]
-}
-EOF
+      [
+        for bucket in coalesce(each.value.additional_buckets, []) : [
+        {
+          Effect   = "Allow",
+          Action   = ["s3:ListBucket", "s3:GetBucketLocation"],
+          Resource = "arn:aws:s3:::${bucket.bucket_name}"
+        },
+        {
+          Effect   = "Allow",
+          Action   = concat([
+            "s3:GetObject",
+            ],
+            bucket.readonly ? [] : [
+            "s3:PutObject",
+            "s3:DeleteObject"
+            ]),
+          Resource = [
+            length(coalesce(bucket.paths, [])) == 0 ? "arn:aws:s3:::${bucket.bucket_name}/*" :  [ for path in bucket.paths : "arn:aws:s3:::${bucket.bucket_name}/${path}/*"]
+          ]
+        }
+      ]
+      ]
+    ])
+  })
 }
