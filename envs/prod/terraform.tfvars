@@ -1,11 +1,13 @@
 bucket_name = "soerenschneider-restic-prod"
 
 repos = [
+  { name = "jellyfin-sqlite" },
+  { name = "jellyfin-data" },
+  { name = "linkding-postgres" },
+  { name = "linkding-data" },
   { name = "mealie-postgres" },
   { name = "mealie-pvc" },
   { name = "miniflux" },
-  { name = "vault-prod" },
-  { name = "vaultwarden" },
   { name = "radicale" },
   {
     name = "taskwarrior-prod",
@@ -15,5 +17,7 @@ repos = [
         readonly    = false,
       }
     ]
-  }
+  },
+  { name = "vault-prod" },
+  { name = "vaultwarden" }
 ]
