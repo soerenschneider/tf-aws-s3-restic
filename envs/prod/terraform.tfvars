@@ -1,12 +1,16 @@
 bucket_name = "soerenschneider-restic-prod"
 
 repos = [
-  { name = "jellyfin-sqlite" },
-  { name = "jellyfin-data" },
-  { name = "linkding-postgres" },
-  { name = "linkding-data" },
-  { name = "mealie-postgres" },
-  { name = "mealie-pvc" },
+  {
+    name = "auth-mariadb",
+    password_store_paths = [
+      "machine-group/auth/restic/%s/aws-credentials",
+    ],
+  },
+  { name = "jellyfin" },
+  { name = "linkding" },
+  { name = "mealie" },
+  { name = "memos" },
   { name = "miniflux" },
   { name = "radicale" },
   {
